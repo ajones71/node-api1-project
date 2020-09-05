@@ -4,13 +4,18 @@ const server = express()
 
 const PORT = 5000
 
+const shortid = require('shortid');
+
 const users =[
 {
-    id: "a_unique_id", // hint: use the shortid npm package to generate it
+    id: shortid.generate(), // hint: use the shortid npm package to generate it
     name: "Jane Doe", // String, required
     bio: "Not Tarzan's Wife, another Jane",  // String, required
   }
 ]
+server.get('/', (req, res) =>{
+    res.json({message: 'Hello World'})
+})
 server.get('/api/users', (req, res) => {
     res.json(users);
 })
@@ -20,9 +25,15 @@ server.get('/api/users/:id', (req, res) => {
 })
 server.post('/api/users', (req, res) =>{
     const UsersInfo = req.body;
-    UsersInfo.id = shortid.generate()
-    Users.push(UsersInfo);
-    res.status(201).json(UsersInfo)
+    if(UsersInfo.name && UsersInfo.bio){
+        UsersInfo.id = shortid.generate()
+        users.push(UsersInfo);
+        res.status(201).json(UsersInfo)
+    }else {
+        res.status(400).json({message: 'Please provide a Name and a Bio'})
+    }
+    
+  
 })
 
 server.put('/api/users/:id', (req, res) => {
